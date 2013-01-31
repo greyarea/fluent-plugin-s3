@@ -1,5 +1,5 @@
 module Fluent
-
+require "base64"
 
 class S3Output < Fluent::TimeSlicedOutput
   Fluent::Plugin.register_output('s3', self)
@@ -84,7 +84,8 @@ class S3Output < Fluent::TimeSlicedOutput
     if @format_json
       Yajl.dump(record) + "\n"
     else
-      "#{time_str}\t#{tag}\t#{Yajl.dump(record)}\n"
+      record = Base64.strict_encode64(record)
+      "#{time_str}\t#{tag}\t#{record}\n"
     end
   end
 
